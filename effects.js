@@ -4,7 +4,6 @@ class EffectsManager {
     this.activeEffects = [];
     this.settingPointForEffectId = null;
     this.paintingEffectId = null;
-    this.MAX_EFFECTS = 15;
     this.TWO_PI = Math.PI * 2;
     this.EFFECT_TYPE_BREATHING = 1;
     this.EFFECT_TYPE_MASK_SWAY = 2;
@@ -16,8 +15,6 @@ class EffectsManager {
     this.animationEnabled = true;
     
     this.elements = {
-      activeEffectsList: document.getElementById('active-effects-list'),
-      noEffectsText: document.getElementById('no-effects-text'),
       canvas: document.getElementById('canvas'),
       animationToggle: document.getElementById('animationToggle'),
       animationToggleText: document.getElementById('animationToggleText')
@@ -63,132 +60,16 @@ class EffectsManager {
   }
 
   createEffect(type) {
-    if (type === 'maskSway') {
-      return {
-        id: Date.now() + Math.random(),
-        type,
-        strength: 0.005, // Reduzido de 0.008 para movimento mais sutil
-        speed: 1.0, // Reduzido de 1.5 para movimento mais lento e suave
-        noiseScale: 0.8, // Reduzido de 1.5 para ondas mais amplas e suaves
-        align: 0.5, // Não usado no novo algoritmo, mas mantido
-        wind: { x: 0.005, y: 0.002 }, // Reduzido para drift mais sutil
-        phase: 0.0,
-        showPreview: true, // Será atualizado baseado no estado do collapse
-        expanded: true,
-        // Canvas e contexto próprios para a máscara deste efeito
-        maskCanvas: null,
-        maskCtx: null,
-        maskTexture: null,
-        brush: {
-          size: 20,
-          hardness: 1.0,
-          erase: false
-        },
-        exclusionMask: {
-          enabled: false,
-          brush: {
-            size: 30,
-            hardness: 0.8,
-            erase: false
-          }
-        }
-      };
-    } else if (type === 'wave') {
-      return {
-        id: Date.now() + Math.random(),
-        type,
-        strength: 0.015,
-        radius: 0.3,
-        softness: 0.3,
-        speed: 2.0,
-        phase: 0.0,
-        marker: { x: 0.5, y: 0.5 },
-        showPreview: true,
-        expanded: true,
-        waveSize: 15.0,           // Tamanho das ondas
-        waveDirection: { x: 1.0, y: 0.0 }, // Direção das ondas (horizontal por padrão)
-        // Máscara pintável para definir área afetada
-        maskCanvas: null,
-        maskCtx: null,
-        maskTexture: null,
-        brush: {
-          size: 20,
-          hardness: 1.0,
-          erase: false
-        },
-        exclusionMask: {
-          enabled: false,
-          brush: {
-            size: 30,
-            hardness: 0.8,
-            erase: false
-          }
-        }
-      };
-    } else if (type === 'saber') {
-      return {
-        id: Date.now() + Math.random(),
-        type,
-        strength: 0.025,          // Reduzir de 0.040 para 0.025 - ainda visível mas menos intenso
-        speed: 1.2,               // fireSpeed
-        phase: 0.0,
-        turbulence: 0.8,          // noiseMultiplier/distortionPower
-        color: '#ff6b35',         // outerColorBase
-        fuzziness: 0.4,           // fuzziness (suavização das bordas)
-        baseSize: 1.2,            // baseSize (largura da chama)
-        verticalFalloff: 2.0,     // innerVerticalFalloff (como a chama diminui verticalmente)
-        pulseIntensity: 1.0,      // intensidade da pulsação de cor
-        showPreview: true,
-        expanded: true,
-        // Máscara pintável para definir área afetada
-        maskCanvas: null,
-        maskCtx: null,
-        maskTexture: null,
-        brush: {
-          size: 30,
-          hardness: 0.8,
-          erase: false
-        },
-        exclusionMask: {
-          enabled: false,
-          brush: {
-            size: 30,
-            hardness: 0.8,
-            erase: false
-          }
-        }
-      };
-    } else {
-      return {
-        id: Date.now() + Math.random(),
-        type,
-        strength: 0.03,
-        radius: 0.4,
-        softness: 0.4,
-        speed: 1.5,
-        phase: 0.0,
-        marker: { x: 0.5, y: 0.5 },
-        showPreview: true, // Será atualizado baseado no estado do collapse
-        expanded: true,
-        exclusionMask: {
-          enabled: false,
-          brush: {
-            size: 30,
-            hardness: 0.8,
-            erase: false
-          }
-        }
-      };
+    // Delegate creation to the global registry for better modularity
+    const effect = window.effectsRegistry.create(type);
+    if (!effect) {
+      console.warn(`Effect type "${type}" is not registered.`);
     }
+    return effect;
   }
 
   addEffect(type) {
     console.log('Adicionando efeito:', type);
-    
-    if (this.activeEffects.length >= this.MAX_EFFECTS) {
-      this.showNotification('Limite de efeitos atingido.', 'warning');
-      return;
-    }
 
     const newEffect = this.createEffect(type);
     if (newEffect) {
@@ -548,79 +429,7 @@ class EffectsManager {
   }
 
   renderEffectsUI() {
-    console.log('Renderizando UI, efeitos ativos:', this.activeEffects.length);
-    
-    if (!this.elements.activeEffectsList || !this.elements.noEffectsText) {
-      console.error('Elementos DOM não encontrados');
-      return;
-    }
-    
-    this.elements.noEffectsText.classList.toggle('d-none', this.activeEffects.length > 0);
-    
-    let html = '';
-    if (this.activeEffects.length > 0) {
-      html += '<div class="accordion" id="effectsAccordion">';
-    }
-    
-    this.activeEffects.forEach((effect, idx) => {
-      const collapseId = `collapse-${effect.id}`;
-      const headingId = `heading-${effect.id}`;
-      
-      let title = '';
-      if (effect.type === 'maskSway') {
-        const hasMask = effect.maskCanvas ? ' 🎨' : '';
-        const isActive = this.paintingEffectId === effect.id ? ' ✏️' : '';
-        title = `Máscara (Cabelo) #${idx + 1}${hasMask}${isActive}`;
-      } else if (effect.type === 'wave') {
-        const hasMask = effect.maskCanvas ? ' 🎨' : '';
-        const isActive = this.paintingEffectId === effect.id ? ' ✏️' : '';
-        title = `Ondulação #${idx + 1}${hasMask}${isActive}`;
-      } else if (effect.type === 'saber') {
-        const hasMask = effect.maskCanvas ? ' 🎨' : '';
-        const isActive = this.paintingEffectId === effect.id ? ' ✏️' : '';
-        title = `Saber #${idx + 1}${hasMask}${isActive}`;
-      } else {
-        title = `Respiração #${idx + 1}`;
-      }
-      
-      // Apenas o efeito sendo pintado deve estar expandido, ou o mais recente se nenhum ativo
-      const isExpanded = (this.paintingEffectId === effect.id) || 
-                        (this.paintingEffectId === `exclusion_${effect.id}`) || 
-                        (this.paintingEffectId === null && idx === this.activeEffects.length - 1); // Último adicionado
-      
-      html += `
-        <div class="accordion-item border-secondary mb-2">
-          <h2 class="accordion-header" id="${headingId}">
-            <button class="accordion-button ${isExpanded ? '' : 'collapsed'}" 
-                    type="button" 
-                    data-bs-toggle="collapse" 
-                    data-bs-target="#${collapseId}" 
-                    aria-expanded="${isExpanded}" 
-                    aria-controls="${collapseId}">
-              ${title}
-            </button>
-          </h2>
-          <div id="${collapseId}" 
-               class="accordion-collapse collapse ${isExpanded ? 'show' : ''}" 
-               aria-labelledby="${headingId}" 
-               data-bs-parent="#effectsAccordion">
-            <div class="accordion-body p-2">
-              ${this.renderEffectControls(effect)}
-            </div>
-          </div>
-        </div>`;
-    });
-    
-    if (this.activeEffects.length > 0) {
-      html += '</div>';
-    }
-    
-    this.elements.activeEffectsList.innerHTML = html;
-    
-    // Adicionar event listeners para controlar preview baseado no estado do collapse
-    this.setupCollapseListeners();
-    
-    console.log('UI renderizada com sucesso');
+    document.dispatchEvent(new Event('effectsUpdated'));
   }
 
   setupCollapseListeners() {

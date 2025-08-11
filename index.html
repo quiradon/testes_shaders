@@ -117,7 +117,7 @@
           <!-- Right Column: Controls -->
           <div class="col-lg-4">
             <div class="d-flex flex-column h-100 gap-3">
-              
+
               <!-- Brush Tools Panel -->
               <div id="brushToolsPanel" class="card bg-body-tertiary d-none">
                 <div class="card-header py-2">
@@ -133,23 +133,23 @@
                       <div class="small text-muted mt-1">Preview do Pincel</div>
                     </div>
                   </div>
-                  
+
                   <!-- Brush Controls -->
                   <div class="row g-2 mb-2">
                     <div class="col-6">
                       <label class="form-label small mb-1">Tamanho</label>
-                      <input type="range" id="brushSize" class="form-range" 
+                      <input type="range" id="brushSize" class="form-range"
                              min="1" max="100" step="1" value="20">
                       <div id="brushSizeDisplay" class="text-center small text-muted">20px</div>
                     </div>
                     <div class="col-6">
                       <label class="form-label small mb-1">Dureza</label>
-                      <input type="range" id="brushHardness" class="form-range" 
+                      <input type="range" id="brushHardness" class="form-range"
                              min="0.1" max="1.0" step="0.1" value="1.0">
                       <div id="brushHardnessDisplay" class="text-center small text-muted">100%</div>
                     </div>
                   </div>
-                  
+
                   <!-- Brush Mode -->
                   <div class="d-flex gap-2 mb-2">
                     <button id="brushModeBtn" class="btn btn-outline-secondary btn-sm flex-fill brush-mode-btn" data-mode="paint">
@@ -159,7 +159,7 @@
                       🧽 Borracha
                     </button>
                   </div>
-                  
+
                   <!-- Quick Actions -->
                   <div class="d-flex gap-2">
                     <button id="clearCurrentMask" class="btn btn-outline-danger btn-sm flex-fill">
@@ -172,41 +172,7 @@
                 </div>
               </div>
 
-              <!-- Effects Panel -->
-              <div class="card bg-body-tertiary flex-grow-1">
-                <div class="card-body d-flex flex-column">
-                  <h6 class="card-title mb-3 text-center">Efeitos Ativos</h6>
-                  <div id="active-effects-list" class="flex-grow-1">
-                    <p id="no-effects-text" class="text-center text-body-secondary mt-4">Nenhum efeito adicionado.</p>
-                  </div>
-                </div>
-              </div>
-              <div class="mt-3">
-                <div class="btn-group d-block mb-2">
-                  <button type="button" class="btn btn-primary dropdown-toggle w-100" data-bs-toggle="dropdown" aria-expanded="false">Adicionar Efeito</button>
-                  <ul class="dropdown-menu w-100">
-                    <li><a class="dropdown-item" href="#" onclick="effectsManager.addEffect('breathing')">
-                      <span class="me-2">💨</span>Respiração
-                    </a></li>
-                    <li><a class="dropdown-item" href="#" onclick="effectsManager.addEffect('maskSway')">
-                      <span class="me-2">💇</span>Cabelo (Máscara)
-                    </a></li>
-                    <li><a class="dropdown-item" href="#" onclick="effectsManager.addEffect('wave')">
-                      <span class="me-2">🌊</span>Ondulação
-                    </a></li>
-                    <li><a class="dropdown-item" href="#" onclick="effectsManager.addEffect('saber')">
-                      <span class="me-2">⚔️</span>Saber
-                    </a></li>
-                  </ul>
-                </div>
-                <div class="btn-group d-block">
-                  <button type="button" class="btn btn-success btn-lg dropdown-toggle w-100" data-bs-toggle="dropdown" aria-expanded="false" id="exportBtn" disabled>Exportar Animação</button>
-                  <ul class="dropdown-menu w-100">
-                    <li><a class="dropdown-item" href="#" id="downloadGif">Exportar como GIF</a></li>
-                    <li><a class="dropdown-item" href="#" id="downloadWebM">Exportar como WebM (Vídeo)</a></li>
-                  </ul>
-                </div>
-              </div>
+              <div id="effectsRoot"></div>
             </div>
           </div>
         </div>
@@ -219,9 +185,18 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.js"></script>
   <script src="shaders.js"></script>
   <script src="canvas-controls.js"></script>
+  <script src="effects/registry.js"></script>
+  <script src="effects/breathing.js"></script>
+  <script src="effects/maskSway.js"></script>
+  <script src="effects/wave.js"></script>
+  <script src="effects/saber.js"></script>
   <script src="effects.js"></script>
   <script src="webgl-renderer.js"></script>
   <script src="export-utils.js"></script>
   <script src="app.js"></script>
+  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+  <script type="text/babel" src="ui/effects-panel.jsx"></script>
 </body>
 </html>
