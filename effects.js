@@ -4,7 +4,6 @@ class EffectsManager {
     this.activeEffects = [];
     this.settingPointForEffectId = null;
     this.paintingEffectId = null;
-    this.MAX_EFFECTS = 15;
     this.TWO_PI = Math.PI * 2;
     this.EFFECT_TYPE_BREATHING = 1;
     this.EFFECT_TYPE_MASK_SWAY = 2;
@@ -63,132 +62,16 @@ class EffectsManager {
   }
 
   createEffect(type) {
-    if (type === 'maskSway') {
-      return {
-        id: Date.now() + Math.random(),
-        type,
-        strength: 0.005, // Reduzido de 0.008 para movimento mais sutil
-        speed: 1.0, // Reduzido de 1.5 para movimento mais lento e suave
-        noiseScale: 0.8, // Reduzido de 1.5 para ondas mais amplas e suaves
-        align: 0.5, // Não usado no novo algoritmo, mas mantido
-        wind: { x: 0.005, y: 0.002 }, // Reduzido para drift mais sutil
-        phase: 0.0,
-        showPreview: true, // Será atualizado baseado no estado do collapse
-        expanded: true,
-        // Canvas e contexto próprios para a máscara deste efeito
-        maskCanvas: null,
-        maskCtx: null,
-        maskTexture: null,
-        brush: {
-          size: 20,
-          hardness: 1.0,
-          erase: false
-        },
-        exclusionMask: {
-          enabled: false,
-          brush: {
-            size: 30,
-            hardness: 0.8,
-            erase: false
-          }
-        }
-      };
-    } else if (type === 'wave') {
-      return {
-        id: Date.now() + Math.random(),
-        type,
-        strength: 0.015,
-        radius: 0.3,
-        softness: 0.3,
-        speed: 2.0,
-        phase: 0.0,
-        marker: { x: 0.5, y: 0.5 },
-        showPreview: true,
-        expanded: true,
-        waveSize: 15.0,           // Tamanho das ondas
-        waveDirection: { x: 1.0, y: 0.0 }, // Direção das ondas (horizontal por padrão)
-        // Máscara pintável para definir área afetada
-        maskCanvas: null,
-        maskCtx: null,
-        maskTexture: null,
-        brush: {
-          size: 20,
-          hardness: 1.0,
-          erase: false
-        },
-        exclusionMask: {
-          enabled: false,
-          brush: {
-            size: 30,
-            hardness: 0.8,
-            erase: false
-          }
-        }
-      };
-    } else if (type === 'saber') {
-      return {
-        id: Date.now() + Math.random(),
-        type,
-        strength: 0.025,          // Reduzir de 0.040 para 0.025 - ainda visível mas menos intenso
-        speed: 1.2,               // fireSpeed
-        phase: 0.0,
-        turbulence: 0.8,          // noiseMultiplier/distortionPower
-        color: '#ff6b35',         // outerColorBase
-        fuzziness: 0.4,           // fuzziness (suavização das bordas)
-        baseSize: 1.2,            // baseSize (largura da chama)
-        verticalFalloff: 2.0,     // innerVerticalFalloff (como a chama diminui verticalmente)
-        pulseIntensity: 1.0,      // intensidade da pulsação de cor
-        showPreview: true,
-        expanded: true,
-        // Máscara pintável para definir área afetada
-        maskCanvas: null,
-        maskCtx: null,
-        maskTexture: null,
-        brush: {
-          size: 30,
-          hardness: 0.8,
-          erase: false
-        },
-        exclusionMask: {
-          enabled: false,
-          brush: {
-            size: 30,
-            hardness: 0.8,
-            erase: false
-          }
-        }
-      };
-    } else {
-      return {
-        id: Date.now() + Math.random(),
-        type,
-        strength: 0.03,
-        radius: 0.4,
-        softness: 0.4,
-        speed: 1.5,
-        phase: 0.0,
-        marker: { x: 0.5, y: 0.5 },
-        showPreview: true, // Será atualizado baseado no estado do collapse
-        expanded: true,
-        exclusionMask: {
-          enabled: false,
-          brush: {
-            size: 30,
-            hardness: 0.8,
-            erase: false
-          }
-        }
-      };
+    // Delegate creation to the global registry for better modularity
+    const effect = window.effectsRegistry.create(type);
+    if (!effect) {
+      console.warn(`Effect type "${type}" is not registered.`);
     }
+    return effect;
   }
 
   addEffect(type) {
     console.log('Adicionando efeito:', type);
-    
-    if (this.activeEffects.length >= this.MAX_EFFECTS) {
-      this.showNotification('Limite de efeitos atingido.', 'warning');
-      return;
-    }
 
     const newEffect = this.createEffect(type);
     if (newEffect) {

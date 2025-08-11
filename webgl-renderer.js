@@ -1,4 +1,6 @@
 // Renderizador WebGL
+const MAX_EFFECTS = 50;
+
 class WebGLRenderer {
   constructor() {
     this.gl = null;
@@ -626,19 +628,19 @@ class WebGLRenderer {
 
     // Obter efeitos ativos da lista global
     const effects = effectsManager.activeEffects;
-    const n = effects.length;
+    const n = Math.min(effects.length, MAX_EFFECTS);
     
     // Prepare effect data
-    const effectTypes = new Int32Array(15);
-    const effectMarkers = new Float32Array(15 * 2);
-    const effectStrengths = new Float32Array(15);
-    const effectRadii = new Float32Array(15);
-    const effectSoft = new Float32Array(15);
-    const effectSpeeds = new Float32Array(15);
-    const effectPhases = new Float32Array(15);
-    const effectParamsA = new Float32Array(15 * 4);
-    const effectParamsB = new Float32Array(15 * 4);
-    const effectColors = new Float32Array(15 * 4); // Para cores RGBA dos efeitos
+    const effectTypes = new Int32Array(MAX_EFFECTS);
+    const effectMarkers = new Float32Array(MAX_EFFECTS * 2);
+    const effectStrengths = new Float32Array(MAX_EFFECTS);
+    const effectRadii = new Float32Array(MAX_EFFECTS);
+    const effectSoft = new Float32Array(MAX_EFFECTS);
+    const effectSpeeds = new Float32Array(MAX_EFFECTS);
+    const effectPhases = new Float32Array(MAX_EFFECTS);
+    const effectParamsA = new Float32Array(MAX_EFFECTS * 4);
+    const effectParamsB = new Float32Array(MAX_EFFECTS * 4);
+    const effectColors = new Float32Array(MAX_EFFECTS * 4); // Para cores RGBA dos efeitos
 
     for (let i = 0; i < n; i++) {
       const e = effects[i];

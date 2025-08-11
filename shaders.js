@@ -11,7 +11,7 @@ const Shaders = {
 
   fragment: `
     precision mediump float;
-    const int MAX_EFFECTS = 15;
+    const int MAX_EFFECTS = 50;
     const int EFFECT_TYPE_BREATHING = 1;
     const int EFFECT_TYPE_MASK_SWAY = 2;
     const int EFFECT_TYPE_EXCLUSION_MASK = 3;
