@@ -1,0 +1,101 @@
+/* Melhorias para controles de pincel */
+.brush-controls {
+  background: rgba(108, 117, 125, 0.1);
+  border: 1px solid rgba(108, 117, 125, 0.2);
+  border-radius: 6px;
+  padding: 8px;
+}
+
+.brush-size-display,
+.brush-hardness-display {
+  font-size: 0.7rem;
+  color: var(--bs-secondary);
+  font-weight: 500;
+}
+
+.eraser-mode {
+  background: linear-gradient(45deg, #ffc107, #fd7e14) !important;
+  border-color: #fd7e14 !important;
+  color: #212529 !important;
+}
+
+.brush-mode {
+  background: linear-gradient(45deg, #6c757d, #495057) !important;
+  border-color: #6c757d !important;
+}
+
+/* Brush Tools Panel */
+.brush-preview-container {
+  background: #1a1d20;
+  border: 1px solid rgba(108, 117, 125, 0.3);
+  border-radius: 6px;
+  padding: 15px;
+}
+
+.brush-preview-canvas {
+  background: #2d3236;
+  border: 1px solid rgba(108, 117, 125, 0.4);
+  border-radius: 4px;
+  cursor: crosshair;
+}
+
+.brush-mode-btn {
+  transition: all 0.2s ease;
+}
+
+.brush-mode-btn.active {
+  transform: scale(1.05);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+.brush-mode-btn[data-mode="paint"].active {
+  background: linear-gradient(45deg, #0d6efd, #6610f2) !important;
+  border-color: #0d6efd !important;
+  color: white !important;
+}
+
+.brush-mode-btn[data-mode="erase"].active {
+  background: linear-gradient(45deg, #ffc107, #fd7e14) !important;
+  border-color: #fd7e14 !important;
+  color: #212529 !important;
+}
+
+/* Animações suaves */
+#brushToolsPanel {
+  animation: slideInRight 0.3s ease-out;
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.brush-preview-dot {
+  transition: all 0.1s ease;
+}
+
+/* Toggle de animação */
+#animationToggle {
+  transition: all 0.3s ease;
+}
+
+#animationToggle:hover {
+  transform: scale(1.05);
+}
+
+#animationToggle.btn-success {
+  background: linear-gradient(45deg, #198754, #20c997);
+  border-color: #198754;
+}
+
+#animationToggle.btn-warning {
+  background: linear-gradient(45deg, #ffc107, #fd7e14);
+  border-color: #ffc107;
+  color: #212529;
+}

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-bs-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Animador de Token — Máscara precisa + Zoom</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="brush-improvements.css">
+</head>
+<body class="d-flex align-items-center py-4 bg-body-tertiary">
+  <main class="container">
+    <div class="card shadow-lg main-card">
+      <div class="card-body p-4 p-md-5">
+        <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+          <div class="text-start">
+            <h1 class="h2 mb-1 fw-bold text-primary">Animador de Token</h1>
+            <small class="text-muted d-block mt-1">
+              💡 <strong>Dicas:</strong> ESC para cancelar | E para alternar pincel/borracha | Botão verde para pausar animação
+            </small>
+          </div>
+          <div class="d-flex flex-wrap gap-2 align-items-center">
+            <button id="animationToggle" class="btn btn-success btn-sm" title="Toggle Animação">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-play-circle me-1" viewBox="0 0 16 16">
+                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                <path d="M6.271 5.055a.5.5 0 0 1 .52.26L11 7.055a.5.5 0 0 1 0 .89L6.791 9.685a.5.5 0 0 1-.791-.39V5.705a.5.5 0 0 1 .271-.65"/>
+              </svg>
+              <span id="animationToggleText">ON</span>
+            </button>
+            <button id="resetBtn" class="btn btn-outline-secondary btn-sm">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-counterclockwise me-1" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M8 3a5 5 0 1 1-4.546 2.914.5.5 0 0 0-.908-.417A6 6 0 1 0 8 2z"/>
+                <path d="M8 4.466V.534a.25.25 0 0 0-.41-.192L5.23 2.308a.25.25 0 0 0 0 .384l2.36 1.966A.25.25 0 0 0 8 4.466"/>
+              </svg>
+              Resetar
+            </button>
+          </div>
+        </div>
+
+        <input type="file" id="imageLoader" name="imageLoader" accept="image/*" class="d-none" />
+
+        <div class="row g-4">
+          <!-- Left Column: Canvas Area -->
+          <div class="col-lg-8">
+            <div id="canvasContainer" class="canvas-container rounded p-2">
+              <div id="canvasPlaceholder" class="text-center py-5">
+                <label for="imageLoader" class="btn btn-primary btn-lg mb-3 px-5">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="17 8 12 3 7 8"/>
+                    <line x1="12" x2="12" y1="3" y2="15"/>
+                  </svg>
+                  Carregar Primeira Imagem
+                </label>
+                <p class="text-body-secondary">...ou arraste e solte o arquivo aqui.</p>
+              </div>
+              
+              <!-- Canvas navigation controls -->
+              <div id="canvasControls" class="canvas-controls d-none">
+                <div class="canvas-navigation">
+                  <button id="panBtn" class="btn btn-sm btn-outline-secondary" title="Pan (Arrastar)">
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                      <path d="M8 15c4.418 0 8-3.134 8-7s-3.582-7-8-7-8 3.134-8 7c0 2.76 1.686 5.77 8 7z"/>
+                      <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+                    </svg>
+                  </button>
+                  <button id="centerBtn" class="btn btn-sm btn-outline-secondary" title="Centralizar">
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                      <path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z"/>
+                      <path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52l-.094-.319z"/>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Zoom controls -->
+              <div id="zoomControls" class="zoom-controls d-none">
+                <div class="zoom-buttons">
+                  <button id="zoomOutBtn" class="btn btn-sm btn-outline-secondary" title="Reduzir zoom">
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                      <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                      <path d="M4 6.5h6a.5.5 0 0 1 0 1H4a.5.5 0 0 1 0-1z"/>
+                    </svg>
+                  </button>
+                  <span id="zoomDisplay" class="zoom-display">100%</span>
+                  <button id="zoomInBtn" class="btn btn-sm btn-outline-secondary" title="Aumentar zoom">
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                      <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                      <path d="M6.5 4a.5.5 0 0 1 .5.5v2h2a.5.5 0 0 1 0 1h-2v2a.5.5 0 0 1-1 0v-2h-2a.5.5 0 0 1 0-1h2v-2A.5.5 0 0 1 6.5 4z"/>
+                    </svg>
+                  </button>
+                  <button id="fitBtn" class="btn btn-sm btn-outline-secondary ms-2" title="Ajustar ao tamanho">
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                      <path d="M5.5 0A.5.5 0 0 1 6 .5v.76l.5-.5a.5.5 0 0 1 .707.707L6 2.674V3.5a.5.5 0 0 1-1 0V0z"/>
+                      <path d="M3.5 6A.5.5 0 0 0 3 5.5H.5a.5.5 0 0 0 0 1h.76L.5 7.293A.5.5 0 0 0 1.207 8l.793-.793V8.5a.5.5 0 0 0 1 0V6z"/>
+                      <path d="M16 5.5a.5.5 0 0 0-.5-.5H13a.5.5 0 0 0 0 1h.76l-.793.793a.5.5 0 0 0 .707.707L14.5 6.26V8.5a.5.5 0 0 0 1 0V5.5z"/>
+                      <path d="M8 16a.5.5 0 0 0 .5-.5v-.76l.793.793a.5.5 0 0 0 .707-.707L8.76 14H10.5a.5.5 0 0 0 0-1H8a.5.5 0 0 0 0 1z"/>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              
+              <div id="scrollArea" class="rounded">
+                <div id="stage">
+                  <canvas id="canvas" class="main-gl d-none"></canvas>
+                  <canvas id="overlay" class="overlay d-none"></canvas>
+                </div>
+              </div>
+              
+              <div id="loading" class="d-none flex-column align-items-center justify-content-center text-center position-absolute top-50 start-50 translate-middle">
+                <div class="loader"></div>
+                <p id="loadingText" class="mt-3 fw-semibold">Gerando animação...</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column: Controls -->
+          <div class="col-lg-4">
+            <div class="d-flex flex-column h-100 gap-3">
+              
+              <!-- Brush Tools Panel -->
+              <div id="brushToolsPanel" class="card bg-body-tertiary d-none">
+                <div class="card-header py-2">
+                  <h6 class="card-title mb-0 text-center">
+                    🎨 Ferramentas de Pincel
+                  </h6>
+                </div>
+                <div class="card-body p-3">
+                  <!-- Brush Preview -->
+                  <div class="brush-preview-container mb-3">
+                    <div class="text-center">
+                      <canvas id="brushPreview" width="100" height="100" class="brush-preview-canvas"></canvas>
+                      <div class="small text-muted mt-1">Preview do Pincel</div>
+                    </div>
+                  </div>
+                  
+                  <!-- Brush Controls -->
+                  <div class="row g-2 mb-2">
+                    <div class="col-6">
+                      <label class="form-label small mb-1">Tamanho</label>
+                      <input type="range" id="brushSize" class="form-range" 
+                             min="1" max="100" step="1" value="20">
+                      <div id="brushSizeDisplay" class="text-center small text-muted">20px</div>
+                    </div>
+                    <div class="col-6">
+                      <label class="form-label small mb-1">Dureza</label>
+                      <input type="range" id="brushHardness" class="form-range" 
+                             min="0.1" max="1.0" step="0.1" value="1.0">
+                      <div id="brushHardnessDisplay" class="text-center small text-muted">100%</div>
+                    </div>
+                  </div>
+                  
+                  <!-- Brush Mode -->
+                  <div class="d-flex gap-2 mb-2">
+                    <button id="brushModeBtn" class="btn btn-outline-secondary btn-sm flex-fill brush-mode-btn" data-mode="paint">
+                      ✏️ Pincel
+                    </button>
+                    <button id="eraserModeBtn" class="btn btn-outline-warning btn-sm flex-fill brush-mode-btn" data-mode="erase">
+                      🧽 Borracha
+                    </button>
+                  </div>
+                  
+                  <!-- Quick Actions -->
+                  <div class="d-flex gap-2">
+                    <button id="clearCurrentMask" class="btn btn-outline-danger btn-sm flex-fill">
+                      🗑️ Limpar Máscara
+                    </button>
+                    <button id="closeBrushTools" class="btn btn-outline-secondary btn-sm">
+                      ✖️
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Effects Panel -->
+              <div class="card bg-body-tertiary flex-grow-1">
+                <div class="card-body d-flex flex-column">
+                  <h6 class="card-title mb-3 text-center">Efeitos Ativos</h6>
+                  <div id="active-effects-list" class="flex-grow-1">
+                    <p id="no-effects-text" class="text-center text-body-secondary mt-4">Nenhum efeito adicionado.</p>
+                  </div>
+                </div>
+              </div>
+              <div class="mt-3">
+                <div class="btn-group d-block mb-2">
+                  <button type="button" class="btn btn-primary dropdown-toggle w-100" data-bs-toggle="dropdown" aria-expanded="false">Adicionar Efeito</button>
+                  <ul class="dropdown-menu w-100">
+                    <li><a class="dropdown-item" href="#" onclick="effectsManager.addEffect('breathing')">
+                      <span class="me-2">💨</span>Respiração
+                    </a></li>
+                    <li><a class="dropdown-item" href="#" onclick="effectsManager.addEffect('maskSway')">
+                      <span class="me-2">💇</span>Cabelo (Máscara)
+                    </a></li>
+                    <li><a class="dropdown-item" href="#" onclick="effectsManager.addEffect('wave')">
+                      <span class="me-2">🌊</span>Ondulação
+                    </a></li>
+                    <li><a class="dropdown-item" href="#" onclick="effectsManager.addEffect('saber')">
+                      <span class="me-2">⚔️</span>Saber
+                    </a></li>
+                  </ul>
+                </div>
+                <div class="btn-group d-block">
+                  <button type="button" class="btn btn-success btn-lg dropdown-toggle w-100" data-bs-toggle="dropdown" aria-expanded="false" id="exportBtn" disabled>Exportar Animação</button>
+                  <ul class="dropdown-menu w-100">
+                    <li><a class="dropdown-item" href="#" id="downloadGif">Exportar como GIF</a></li>
+                    <li><a class="dropdown-item" href="#" id="downloadWebM">Exportar como WebM (Vídeo)</a></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.js"></script>
+  <script src="shaders.js"></script>
+  <script src="canvas-controls.js"></script>
+  <script src="effects.js"></script>
+  <script src="webgl-renderer.js"></script>
+  <script src="export-utils.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,346 @@
+:root { 
+  --grid-size: 32px; 
+}
+
+body { 
+  background-color: #212529; 
+}
+
+.main-card { 
+  min-height: 75vh; 
+}
+
+.canvas-container { 
+  position: relative; 
+  border: 2px dashed var(--bs-border-color); 
+  min-height: 450px; 
+  height: 100%; 
+  background-color: #343a40; 
+  background-image: repeating-conic-gradient(var(--bs-secondary-bg) 0% 25%, var(--bs-tertiary-bg) 0% 50%); 
+  background-size: var(--grid-size) var(--grid-size); 
+  transition: border-color .2s; 
+}
+
+.canvas-container.dragover { 
+  border-color: var(--bs-primary); 
+  border-style: solid; 
+}
+
+.canvas-controls {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 10;
+  background: rgba(33, 37, 41, 0.9);
+  border-radius: 6px;
+  padding: 4px;
+  backdrop-filter: blur(10px);
+}
+
+.zoom-controls {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  z-index: 10;
+  background: rgba(33, 37, 41, 0.9);
+  border-radius: 6px;
+  padding: 6px;
+  backdrop-filter: blur(10px);
+}
+
+.canvas-navigation {
+  display: flex;
+  gap: 2px;
+}
+
+.zoom-buttons {
+  display: flex;
+  gap: 2px;
+  align-items: center;
+}
+
+.zoom-display {
+  background: rgba(108, 117, 125, 0.2);
+  color: #f8f9fa;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  min-width: 40px;
+  text-align: center;
+  border: 1px solid rgba(108, 117, 125, 0.3);
+}
+
+/* Layers Panel */
+.layers-list {
+  max-height: 200px;
+  overflow-y: auto;
+  min-height: 60px;
+}
+
+.layer-item {
+  background: rgba(108, 117, 125, 0.1);
+  border: 1px solid rgba(108, 117, 125, 0.3);
+  border-radius: 6px;
+  padding: 8px;
+  margin-bottom: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.layer-item:hover {
+  background: rgba(108, 117, 125, 0.2);
+  border-color: rgba(108, 117, 125, 0.5);
+}
+
+.layer-item.selected {
+  background: rgba(13, 110, 253, 0.15);
+  border-color: var(--bs-primary);
+  box-shadow: 0 0 0 1px rgba(13, 110, 253, 0.25);
+}
+
+.layer-thumbnail {
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  object-fit: cover;
+  border: 1px solid rgba(108, 117, 125, 0.3);
+}
+
+.layer-info {
+  flex-grow: 1;
+  min-width: 0;
+}
+
+.layer-name {
+  font-size: 0.8rem;
+  font-weight: 500;
+  margin-bottom: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.layer-size {
+  font-size: 0.7rem;
+  color: var(--bs-secondary);
+  margin-bottom: 0;
+}
+
+.layer-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.layer-visibility {
+  background: none;
+  border: none;
+  padding: 2px;
+  color: var(--bs-secondary);
+  cursor: pointer;
+  border-radius: 2px;
+  transition: color 0.2s ease;
+}
+
+.layer-visibility:hover {
+  color: var(--bs-light);
+  background: rgba(108, 117, 125, 0.2);
+}
+
+.layer-visibility.visible {
+  color: var(--bs-primary);
+}
+
+.layer-opacity-slider {
+  width: 60px;
+  height: 4px;
+  margin: 0;
+}
+
+.layer-blend-mode {
+  font-size: 0.7rem;
+  padding: 1px 4px;
+  border-radius: 2px;
+  background: rgba(108, 117, 125, 0.2);
+  border: 1px solid rgba(108, 117, 125, 0.3);
+  color: var(--bs-light);
+  width: 60px;
+}
+
+.layer-blend-mode:focus {
+  border-color: var(--bs-primary);
+  box-shadow: 0 0 0 1px rgba(13, 110, 253, 0.25);
+}
+
+/* Scrollbars personalizados */
+#scrollArea::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+#scrollArea::-webkit-scrollbar-track {
+  background: rgba(108, 117, 125, 0.1);
+  border-radius: 4px;
+}
+
+#scrollArea::-webkit-scrollbar-thumb {
+  background: rgba(108, 117, 125, 0.5);
+  border-radius: 4px;
+}
+
+#scrollArea::-webkit-scrollbar-thumb:hover {
+  background: rgba(108, 117, 125, 0.7);
+}
+
+/* Animações */
+@keyframes spin { 
+  0% { transform: rotate(0deg); } 
+  100% { transform: rotate(360deg); } 
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Tooltip customizado */
+.custom-tooltip {
+  position: absolute;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  pointer-events: none;
+  z-index: 1000;
+  white-space: nowrap;
+}
+
+.canvas-navigation .btn {
+  border: none;
+  background: rgba(108, 117, 125, 0.2);
+}
+
+.canvas-navigation .btn:hover {
+  background: rgba(108, 117, 125, 0.4);
+}
+
+.canvas-navigation .btn.active {
+  background: var(--bs-primary);
+  color: white;
+}
+
+#scrollArea { 
+  position: relative; 
+  overflow: auto; 
+  width: 100%; 
+  max-height: 70vh; 
+  background: transparent;
+  cursor: grab;
+}
+
+#scrollArea.panning {
+  cursor: grabbing;
+}
+
+#scrollArea.crosshair {
+  cursor: crosshair;
+}
+
+#stage { 
+  position: relative; 
+  display: inline-block; 
+  transition: transform 0.2s ease;
+}
+
+canvas.main-gl { 
+  cursor: inherit;
+  display: block; 
+  border-radius: .375rem; 
+  transition: transform 0.1s ease;
+}
+
+canvas.overlay { 
+  position: absolute; 
+  left: 0; 
+  top: 0; 
+  pointer-events: none; 
+}
+
+.loader { 
+  width: 50px; 
+  height: 50px; 
+  border: 5px solid #495057; 
+  border-top: 5px solid #0d6efd; 
+  border-radius: 50%; 
+  animation: spin 1s linear infinite; 
+}
+
+#active-effects-list { 
+  max-height: 40vh; 
+  overflow-y: auto; 
+}
+
+.accordion-button, 
+.accordion-item, 
+.accordion-body { 
+  background-color: #212529; 
+  color: #f8f9fa; 
+}
+
+.accordion-button:not(.collapsed) { 
+  color: #fff; 
+  background-color: #0d6efd22; 
+}
+
+.form-range { 
+  transform: scaleY(.9); 
+}
+
+.legend-badge { 
+  font-size: .75rem; 
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+  .canvas-controls {
+    position: relative;
+    top: 0;
+    right: 0;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .zoom-controls {
+    position: relative;
+    bottom: 0;
+    left: 0;
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+  }
+  
+  #scrollArea {
+    max-height: 50vh;
+  }
+}
+
+/* Tooltip customizado */
+.custom-tooltip {
+  position: absolute;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  pointer-events: none;
+  z-index: 1000;
+  white-space: nowrap;
+}
